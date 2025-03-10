@@ -9,6 +9,30 @@ const orderRoutes = require("./src/routes/orderRoutes");
 const authRoutes = require("./src/routes/authRoutes");
 
 
+const swaggerUi = require("swagger-ui-express");
+const swaggerJsdoc = require("swagger-jsdoc");
+
+// Cấu hình Swagger
+const swaggerOptions = {
+    definition: {
+        openapi: "3.0.0",
+        info: {
+            title: "POS API",
+            version: "1.0.0",
+            description: "API Documentation for POS System",
+        },
+        servers: [
+            {
+                url: "http://localhost:5000",
+                description: "Local server",
+            },
+        ],
+    },
+    apis: ["./src/routes/*.js"], // Chỉ định file chứa API routes
+};
+
+const swaggerDocs = swaggerJsdoc(swaggerOptions);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -19,8 +43,11 @@ app.use(express.json());
 
 // Kết nối MongoDB
 mongoose
-    .connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-    .then(() => console.log("✅ Connected to MongoDB"))
+    .connect(process.env.MONGO_URI, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
+    .then(() => console.log("✅ Connected to MongoDB Atlas"))
     .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 // Routes
